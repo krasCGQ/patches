@@ -1,0 +1,30 @@
+--- /dev/null	2018-01-29 17:48:03.223269795 +0800
++++ b/0001-fPIC.patch	2018-01-29 22:34:26.116628714 +0800
+@@ -0,0 +1,13 @@
++diff --git a/Makefile b/Makefile
++index 2193c96..0bec574 100644
++--- a/Makefile
+++++ b/Makefile
++@@ -15,7 +15,7 @@ endif
++ 
++ # Compiler flags for various configurations:
++ 
++-CFLAGS := -std=c99 -pedantic -Wall -Wextra -Wno-unused-parameter
+++CFLAGS := -std=c99 -pedantic -Wall -Wextra -Wno-unused-parameter -fPIC
++ 
++ ifeq "$(CC)" "clang"
++ CFLAGS += -Wunreachable-code
+--- a/PKGBUILD	2018-01-29 22:58:59.880140402 +0800
++++ b/PKGBUILD	2018-01-29 22:35:28.651548825 +0800
+@@ -29,6 +29,11 @@
+   printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+ }
+ 
++prepare() {
++  cd "$srcdir/$pkgname"
++  patch -Np1 < ../../0001-fPIC.patch
++}
++
+ build() {
+   cd "$srcdir/$pkgname"
+   make
