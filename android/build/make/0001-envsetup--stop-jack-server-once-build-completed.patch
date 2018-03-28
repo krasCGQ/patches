@@ -1,0 +1,22 @@
+From cce558fc83974dce19ae9a4ee1a1c847f761ce23 Mon Sep 17 00:00:00 2001
+From: Harsh Shandilya <msfjarvis@gmail.com>
+Date: Sat, 17 Dec 2016 23:29:25 +0530
+Subject: [PATCH] envsetup: stop jack server once build completed
+
+Change-Id: I5b53890b65f31a0d098a1ddd353a5151bb52b437
+---
+ envsetup.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/envsetup.sh b/envsetup.sh
+index f1aea598a..350fce648 100644
+--- a/envsetup.sh
++++ b/envsetup.sh
+@@ -1647,6 +1647,7 @@ function _wrap_build()
+     fi
+     echo " ####${color_reset}"
+     echo
++    prebuilts/sdk/tools/jack-admin stop-server 2>&1 >/dev/null
+     return $ret
+ }
+ 
