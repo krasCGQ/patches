@@ -1,0 +1,43 @@
+From 694c4f24200c95227ab9526d90bebc8ef4e9b765 Mon Sep 17 00:00:00 2001
+From: Albert I <krascgq@outlook.co.id>
+Date: Fri, 30 Mar 2018 20:37:10 +0800
+Subject: [PATCH] vendor: Only include Cosmic-OS App with official builds
+
+With this, also move the definition after COS_RELEASE check.
+
+Signed-off-by: Albert I <krascgq@outlook.co.id>
+---
+ common.mk | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/common.mk b/common.mk
+index ee40205..51ccbec 100644
+--- a/common.mk
++++ b/common.mk
+@@ -101,10 +101,6 @@ PRODUCT_PACKAGES += \
+     Retro \
+     Galaxy
+ 
+-# Cosmic-OS App
+-PRODUCT_COPY_FILES += \
+-    vendor/cos/prebuilt/common/app/Cosmic-OS.apk:system/app/Cosmic-OS/Cosmic-OS.apk
+-
+ # Live Wallpapers
+ PRODUCT_PACKAGES += \
+     LiveWallpapersPicker \
+@@ -173,6 +169,12 @@ else
+     COS_RELEASE=false
+ endif
+ 
++# Cosmic-OS App
++ifeq ($(COS_RELEASE),true)
++PRODUCT_COPY_FILES += \
++    vendor/cos/prebuilt/common/app/Cosmic-OS.apk:system/app/Cosmic-OS/Cosmic-OS.apk
++endif
++
+ ifeq ($(COS_RELEASE),true)
+     ifeq ($(COS_BIWEEKLY),true)
+       COS_BUILD_TYPE := BIWEEKLY
+-- 
+2.16.3
+
