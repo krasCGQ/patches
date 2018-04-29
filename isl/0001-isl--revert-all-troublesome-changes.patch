@@ -1,0 +1,389 @@
+From 0923e81eaa24b18430edf32f4fcf64abf728e484 Mon Sep 17 00:00:00 2001
+From: Albert I <krascgq@outlook.co.id>
+Date: Sun, 29 Apr 2018 21:31:08 +0800
+Subject: [PATCH] isl: Revert all troublesome changes
+
+Break GCC 7.x build with floods of undefined reference errors.
+
+* Revert "include/isl/set.h: add missing include"
+  This reverts commit a996eb8a.
+* Revert "isl/id.h: extract out isl/id_type.h"
+  This reverts commit f4e35d0e.
+* Revert "isl/space.h: extract out isl/space_type.h"
+  This reverts commit 406f2e9e.
+
+ Conflicts:
+	include/isl/multi.h
+	include/isl/point.h
+	include/isl/schedule_node.h
+
+Signed-off-by: Albert I <krascgq@outlook.co.id>
+---
+ Makefile.am                  |  2 --
+ include/isl/ast.h            |  2 +-
+ include/isl/constraint.h     |  2 +-
+ include/isl/id.h             |  6 ++++--
+ include/isl/id_to_ast_expr.h |  2 +-
+ include/isl/id_to_id.h       |  2 +-
+ include/isl/id_to_pw_aff.h   |  2 +-
+ include/isl/id_type.h        | 19 -------------------
+ include/isl/local_space.h    |  2 +-
+ include/isl/map.h            |  2 +-
+ include/isl/multi.h          |  2 +-
+ include/isl/point.h          |  2 +-
+ include/isl/polynomial.h     |  2 +-
+ include/isl/printer.h        |  2 +-
+ include/isl/schedule.h       |  2 +-
+ include/isl/schedule_node.h  |  2 +-
+ include/isl/set.h            |  1 -
+ include/isl/space.h          | 16 ++++++++++++++--
+ include/isl/space_type.h     | 25 -------------------------
+ include/isl/union_map.h      |  2 +-
+ isl_space_private.h          |  2 +-
+ 21 files changed, 33 insertions(+), 66 deletions(-)
+ delete mode 100644 include/isl/id_type.h
+ delete mode 100644 include/isl/space_type.h
+
+diff --git a/Makefile.am b/Makefile.am
+index e60fdd6a..cce7197f 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -276,7 +276,6 @@ pkginclude_HEADERS = \
+ 	include/isl/ctx.h \
+ 	include/isl/flow.h \
+ 	include/isl/id.h \
+-	include/isl/id_type.h \
+ 	include/isl/id_to_ast_expr.h \
+ 	include/isl/id_to_id.h \
+ 	include/isl/id_to_pw_aff.h \
+@@ -311,7 +310,6 @@ pkginclude_HEADERS = \
+ 	include/isl/set.h \
+ 	include/isl/set_type.h \
+ 	include/isl/space.h \
+-	include/isl/space_type.h \
+ 	include/isl/stream.h \
+ 	include/isl/stride_info.h \
+ 	include/isl/union_map.h \
+diff --git a/include/isl/ast.h b/include/isl/ast.h
+index 96511ff8..0d88727b 100644
+--- a/include/isl/ast.h
++++ b/include/isl/ast.h
+@@ -3,7 +3,7 @@
+ 
+ #include <isl/ctx.h>
+ #include <isl/ast_type.h>
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ #include <isl/id_to_ast_expr.h>
+ #include <isl/val_type.h>
+ #include <isl/list.h>
+diff --git a/include/isl/constraint.h b/include/isl/constraint.h
+index adb0d863..625d903a 100644
+--- a/include/isl/constraint.h
++++ b/include/isl/constraint.h
+@@ -11,7 +11,7 @@
+ #define ISL_CONSTRAINT_H
+ 
+ #include <isl/local_space.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/aff_type.h>
+ #include <isl/set_type.h>
+ #include <isl/list.h>
+diff --git a/include/isl/id.h b/include/isl/id.h
+index 33aa4b09..c025d513 100644
+--- a/include/isl/id.h
++++ b/include/isl/id.h
+@@ -2,7 +2,6 @@
+ #define ISL_ID_H
+ 
+ #include <isl/ctx.h>
+-#include <isl/id_type.h>
+ #include <isl/list.h>
+ #include <isl/printer_type.h>
+ #include <isl/stdint.h>
+@@ -11,7 +10,10 @@
+ extern "C" {
+ #endif
+ 
+-ISL_DECLARE_LIST_FN(id)
++struct isl_id;
++typedef struct isl_id isl_id;
++
++ISL_DECLARE_LIST(id)
+ 
+ isl_ctx *isl_id_get_ctx(__isl_keep isl_id *id);
+ uint32_t isl_id_get_hash(__isl_keep isl_id *id);
+diff --git a/include/isl/id_to_ast_expr.h b/include/isl/id_to_ast_expr.h
+index 5822241e..a160a9fc 100644
+--- a/include/isl/id_to_ast_expr.h
++++ b/include/isl/id_to_ast_expr.h
+@@ -1,7 +1,7 @@
+ #ifndef ISL_ID_TO_AST_EXPR_H
+ #define ISL_ID_TO_AST_EXPR_H
+ 
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ #include <isl/ast_type.h>
+ #include <isl/maybe_ast_expr.h>
+ 
+diff --git a/include/isl/id_to_id.h b/include/isl/id_to_id.h
+index 30901157..26bbc598 100644
+--- a/include/isl/id_to_id.h
++++ b/include/isl/id_to_id.h
+@@ -1,7 +1,7 @@
+ #ifndef ISL_ID_TO_ID_H
+ #define ISL_ID_TO_ID_H
+ 
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ #include <isl/maybe_id.h>
+ 
+ #define ISL_KEY		isl_id
+diff --git a/include/isl/id_to_pw_aff.h b/include/isl/id_to_pw_aff.h
+index bcbea660..081cc843 100644
+--- a/include/isl/id_to_pw_aff.h
++++ b/include/isl/id_to_pw_aff.h
+@@ -1,7 +1,7 @@
+ #ifndef ISL_ID_TO_PW_AFF_H
+ #define ISL_ID_TO_PW_AFF_H
+ 
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ #include <isl/aff_type.h>
+ #include <isl/maybe_pw_aff.h>
+ 
+diff --git a/include/isl/id_type.h b/include/isl/id_type.h
+deleted file mode 100644
+index e87f8437..00000000
+--- a/include/isl/id_type.h
++++ /dev/null
+@@ -1,19 +0,0 @@
+-#ifndef ISL_ID_TYPE_H
+-#define ISL_ID_TYPE_H
+-
+-#include <isl/list.h>
+-
+-#if defined(__cplusplus)
+-extern "C" {
+-#endif
+-
+-struct isl_id;
+-typedef struct isl_id isl_id;
+-
+-ISL_DECLARE_LIST_TYPE(id)
+-
+-#if defined(__cplusplus)
+-}
+-#endif
+-
+-#endif
+diff --git a/include/isl/local_space.h b/include/isl/local_space.h
+index a7201b05..d0fc960b 100644
+--- a/include/isl/local_space.h
++++ b/include/isl/local_space.h
+@@ -2,7 +2,7 @@
+ #define ISL_LOCAL_SPACE_H
+ 
+ #include <isl/aff_type.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/printer.h>
+ #include <isl/map_type.h>
+ 
+diff --git a/include/isl/map.h b/include/isl/map.h
+index 0a855ed4..c1095470 100644
+--- a/include/isl/map.h
++++ b/include/isl/map.h
+@@ -13,7 +13,7 @@
+ #include <stdio.h>
+ 
+ #include <isl/ctx.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/vec.h>
+ #include <isl/mat.h>
+ #include <isl/printer.h>
+diff --git a/include/isl/multi.h b/include/isl/multi.h
+index f643f9e7..c344cc40 100644
+--- a/include/isl/multi.h
++++ b/include/isl/multi.h
+@@ -2,7 +2,7 @@
+ #define ISL_MULTI_H
+ 
+ #include <isl/val_type.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/list.h>
+ #include <isl/set_type.h>
+ 
+diff --git a/include/isl/point.h b/include/isl/point.h
+index 1dddc628..bc1b976d 100644
+--- a/include/isl/point.h
++++ b/include/isl/point.h
+@@ -2,7 +2,7 @@
+ #define ISL_POINT_H
+ 
+ #include <stdio.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/val_type.h>
+ 
+ #if defined(__cplusplus)
+diff --git a/include/isl/polynomial.h b/include/isl/polynomial.h
+index ab202d81..5f3a6547 100644
+--- a/include/isl/polynomial.h
++++ b/include/isl/polynomial.h
+@@ -3,7 +3,7 @@
+ 
+ #include <isl/ctx.h>
+ #include <isl/constraint.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/set_type.h>
+ #include <isl/point.h>
+ #include <isl/printer.h>
+diff --git a/include/isl/printer.h b/include/isl/printer.h
+index c3159546..dd50e917 100644
+--- a/include/isl/printer.h
++++ b/include/isl/printer.h
+@@ -4,7 +4,7 @@
+ #include <stdio.h>
+ #include <isl/ctx.h>
+ #include <isl/printer_type.h>
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+diff --git a/include/isl/schedule.h b/include/isl/schedule.h
+index 4c5de1bf..b74d5ac6 100644
+--- a/include/isl/schedule.h
++++ b/include/isl/schedule.h
+@@ -5,7 +5,7 @@
+ #include <isl/union_map_type.h>
+ #include <isl/schedule_type.h>
+ #include <isl/aff_type.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/set_type.h>
+ #include <isl/list.h>
+ #include <isl/printer_type.h>
+diff --git a/include/isl/schedule_node.h b/include/isl/schedule_node.h
+index 1ad55152..3a058edc 100644
+--- a/include/isl/schedule_node.h
++++ b/include/isl/schedule_node.h
+@@ -6,7 +6,7 @@
+ #include <isl/aff_type.h>
+ #include <isl/ast_type.h>
+ #include <isl/val_type.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+diff --git a/include/isl/set.h b/include/isl/set.h
+index 29fb84e9..90acf9cb 100644
+--- a/include/isl/set.h
++++ b/include/isl/set.h
+@@ -10,7 +10,6 @@
+ #ifndef ISL_SET_H
+ #define ISL_SET_H
+ 
+-#include <isl/id_type.h>
+ #include <isl/map_type.h>
+ #include <isl/aff_type.h>
+ #include <isl/list.h>
+diff --git a/include/isl/space.h b/include/isl/space.h
+index deb592b8..e7f959be 100644
+--- a/include/isl/space.h
++++ b/include/isl/space.h
+@@ -11,14 +11,26 @@
+ #define ISL_SPACE_H
+ 
+ #include <isl/ctx.h>
+-#include <isl/space_type.h>
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ #include <isl/printer.h>
+ 
+ #if defined(__cplusplus)
+ extern "C" {
+ #endif
+ 
++struct isl_space;
++typedef struct isl_space isl_space;
++
++enum isl_dim_type {
++	isl_dim_cst,
++	isl_dim_param,
++	isl_dim_in,
++	isl_dim_out,
++	isl_dim_set = isl_dim_out,
++	isl_dim_div,
++	isl_dim_all
++};
++
+ isl_ctx *isl_space_get_ctx(__isl_keep isl_space *dim);
+ __isl_give isl_space *isl_space_alloc(isl_ctx *ctx,
+ 			unsigned nparam, unsigned n_in, unsigned n_out);
+diff --git a/include/isl/space_type.h b/include/isl/space_type.h
+deleted file mode 100644
+index 6a181555..00000000
+--- a/include/isl/space_type.h
++++ /dev/null
+@@ -1,25 +0,0 @@
+-#ifndef ISL_SPACE_TYPE_H
+-#define ISL_SPACE_TYPE_H
+-
+-#if defined(__cplusplus)
+-extern "C" {
+-#endif
+-
+-struct isl_space;
+-typedef struct isl_space isl_space;
+-
+-enum isl_dim_type {
+-	isl_dim_cst,
+-	isl_dim_param,
+-	isl_dim_in,
+-	isl_dim_out,
+-	isl_dim_set = isl_dim_out,
+-	isl_dim_div,
+-	isl_dim_all
+-};
+-
+-#if defined(__cplusplus)
+-}
+-#endif
+-
+-#endif
+diff --git a/include/isl/union_map.h b/include/isl/union_map.h
+index 86fa4953..6483068d 100644
+--- a/include/isl/union_map.h
++++ b/include/isl/union_map.h
+@@ -2,7 +2,7 @@
+ #define ISL_UNION_MAP_H
+ 
+ #include <isl/stdint.h>
+-#include <isl/space_type.h>
++#include <isl/space.h>
+ #include <isl/aff_type.h>
+ #include <isl/map_type.h>
+ #include <isl/union_map_type.h>
+diff --git a/isl_space_private.h b/isl_space_private.h
+index 141d8357..5246429d 100644
+--- a/isl_space_private.h
++++ b/isl_space_private.h
+@@ -3,7 +3,7 @@
+ 
+ #include <isl/space.h>
+ #include <isl/hash.h>
+-#include <isl/id_type.h>
++#include <isl/id.h>
+ 
+ struct isl_name;
+ struct isl_space {
+-- 
+2.16.2
+
