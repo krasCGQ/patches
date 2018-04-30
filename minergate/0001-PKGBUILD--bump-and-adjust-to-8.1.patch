@@ -1,0 +1,32 @@
+diff --git a/PKGBUILD b/PKGBUILD
+index cea618a..ff71e33 100644
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -1,7 +1,7 @@
+ # Maintainer: Carlos Toro <ertsheiker at gmail dot com>
+ 
+ pkgname=minergate
+-pkgver=7.2
++pkgver=8.1
+ pkgrel=1
+ pkgdesc='Cryptocurrency GUI miner and Mining Pool'
+ arch=('x86_64')
+@@ -9,7 +9,7 @@ url='http://www.minergate.com/'
+ provides=('minergate')
+ license=('custom')
+ source=('https://minergate.com/download/ubuntu')
+-md5sums=('6740877192a9530b54a9ab82f9d2b488')
++md5sums=('c7ff22efe556a97c1a7b1ffe3c1caf39')
+ depends=('qt5-base'
+          'gcc-libs-multilib'
+          'qt5-websockets'
+@@ -20,9 +20,7 @@ install=${pkgname}.install
+ 
+ package() {
+   bsdtar xf data.tar.gz
+-  rm -r opt/minergate/lib/libcudart.so.8.0*
+   rm -r opt/minergate/lib/libOpenCL.so*
+-  rm -r opt/minergate/share
+   chmod -R g-w usr opt
+   mv usr opt "${pkgdir}"
+ }
