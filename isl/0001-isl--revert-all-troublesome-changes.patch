@@ -1,9 +1,9 @@
-From 274b88c539b8a41a5d9a27bff578681d65ad5a52 Mon Sep 17 00:00:00 2001
+From 3baca2ef535beb9ed021d5b637b891248794cdba Mon Sep 17 00:00:00 2001
 From: Albert I <krascgq@outlook.co.id>
 Date: Sun, 29 Apr 2018 21:31:08 +0800
 Subject: [PATCH] isl: Revert all troublesome changes
 
-Break GCC builds with floods of 'was not declared on this scope'
+Break GCC builds with floods of 'was not declared in this scope'
 errors. Tested with dynamically linked GNU GCC 7 and 9, and
 crosstool-ng compiled statically linked Linaro GCC 7 builds. (ARM64)
 
