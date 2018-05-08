@@ -1,0 +1,19 @@
+--- a/PKGBUILD	2018-05-08 23:24:02.259038934 +0800
++++ b/PKGBUILD	2018-05-08 23:20:22.533401039 +0800
+@@ -9,7 +9,7 @@
+ makedepends=('git' 'asciidoc')
+ conflicts=('ccache')
+ provides=('ccache')
+-source=("git://git.samba.org/ccache.git")
++source=("git://github.com/ccache/ccache")
+ sha256sums=('SKIP')
+ 
+ pkgver() {
+@@ -35,7 +35,6 @@
+   cd ${srcdir}/ccache
+ 
+   install -Dm 755 ccache ${pkgdir}/usr/bin/ccache
+-  install -Dm 644 ccache.1 ${pkgdir}/usr/share/man/man1/ccache.1
+ 
+   install -d ${pkgdir}/usr/lib/ccache/bin
+   ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/cc 
