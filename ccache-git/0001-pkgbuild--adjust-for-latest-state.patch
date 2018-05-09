@@ -1,5 +1,5 @@
---- a/PKGBUILD	2018-05-08 23:24:02.259038934 +0800
-+++ b/PKGBUILD	2018-05-08 23:20:22.533401039 +0800
+--- a/PKGBUILD	2018-05-09 15:20:49.029224209 +0800
++++ b/PKGBUILD	2018-05-09 15:17:53.731809815 +0800
 @@ -9,7 +9,7 @@
  makedepends=('git' 'asciidoc')
  conflicts=('ccache')
@@ -9,11 +9,20 @@
  sha256sums=('SKIP')
  
  pkgver() {
-@@ -35,7 +35,6 @@
+@@ -35,10 +35,15 @@
    cd ${srcdir}/ccache
  
    install -Dm 755 ccache ${pkgdir}/usr/bin/ccache
--  install -Dm 644 ccache.1 ${pkgdir}/usr/share/man/man1/ccache.1
+-  install -Dm 644 ccache.1 -t ${pkgdir}/usr/share/man/man1/ccache.1
++  install -Dm 644 doc/ccache.1 -t ${pkgdir}/usr/share/man/man1
++  install -Dm 644 doc/AUTHORS.adoc ${pkgdir}/usr/share/doc/${pkgname}
++  install -Dm 644 doc/MANUAL.adoc ${pkgdir}/usr/share/doc/${pkgname}
++  install -Dm 644 doc/NEWS.adoc ${pkgdir}/usr/share/doc/${pkgname}
  
    install -d ${pkgdir}/usr/lib/ccache/bin
    ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/cc 
++  ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/clang
++  ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/clang++
+   ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/gcc
+   ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/g++
+   ln -sf /usr/bin/ccache ${pkgdir}/usr/lib/ccache/bin/cpp
