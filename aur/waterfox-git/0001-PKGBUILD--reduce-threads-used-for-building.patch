@@ -1,0 +1,12 @@
+--- PKGBUILD-orig	2018-05-15 14:37:29.133771652 +0800
++++ PKGBUILD	2018-05-15 14:37:06.016603254 +0800
+@@ -78,6 +78,9 @@
+ 	  fi
+   done
+ 
++  # personal patches because why not
++  sed -i 's/-j6/-j4/' "${srcdir}/Waterfox/.mozconfig"
++
+   mkdir -p "$srcdir/path"
+ }
+ 
