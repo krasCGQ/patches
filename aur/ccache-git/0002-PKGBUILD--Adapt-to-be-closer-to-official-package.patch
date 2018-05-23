@@ -1,14 +1,5 @@
---- a/PKGBUILD	2018-05-09 15:20:49.029224209 +0800
-+++ b/PKGBUILD	2018-05-09 15:17:53.731809815 +0800
-@@ -9,7 +9,7 @@
- makedepends=('git' 'asciidoc')
- conflicts=('ccache')
- provides=('ccache')
--source=("git://git.samba.org/ccache.git")
-+source=("git://github.com/ccache/ccache")
- sha256sums=('SKIP')
- 
- pkgver() {
+--- PKGBUILD	2018-05-23 15:30:31.239238190 +0800
++++ PKGBUILD	2018-05-23 15:30:38.659279944 +0800
 @@ -35,10 +35,15 @@
    cd ${srcdir}/ccache
  
