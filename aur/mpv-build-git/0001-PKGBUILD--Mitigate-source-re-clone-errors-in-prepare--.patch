@@ -1,0 +1,12 @@
+--- a/PKGBUILD	2018-07-18 17:49:58.695090909 +0800
++++ b/PKGBUILD	2018-07-18 17:47:54.020996810 +0800
+@@ -92,6 +92,9 @@
+ 
+ prepare() {
+   cd mpv-build
++  [[ -d mpv ]] && rm -rf mpv
++  [[ -d ffmpeg ]] && rm -rf ffmpeg
++  [[ -d libass ]] && rm -rf libass
+   git clone "${srcdir}/mpv"
+   git clone "${srcdir}/ffmpeg"
+   git clone "${srcdir}/libass"
