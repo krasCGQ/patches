@@ -1,0 +1,73 @@
+From 95e60905473caeb64fa44159b56f9d0988f0dacd Mon Sep 17 00:00:00 2001
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Sat, 27 Oct 2018 13:35:13 -0700
+Subject: [PATCH] Add CLANG_VERSION_SUFFIX to extend the version string
+
+LLVM uses SVN for version control so I would like some way to show the
+revision at the time of build in the version string without needing to
+use SVN locally (because using git is just much more natural and easy
+with my script). I've been setting the patch level to it but that
+confuses some people and potentially programs relying on patch level.
+
+Add CLANG_VERSION_SUFFIX like LLVM_VERSION_SUFFIX and append it to
+the '--version' display.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ clang/CMakeLists.txt                     | 5 ++++-
+ clang/include/clang/Basic/Version.inc.in | 1 +
+ clang/lib/Basic/Version.cpp              | 4 ++--
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/clang/CMakeLists.txt b/clang/CMakeLists.txt
+index c2016a45ca6..dc1f1a846a1 100644
+--- a/clang/CMakeLists.txt
++++ b/clang/CMakeLists.txt
+@@ -323,9 +323,12 @@ endif()
+ if(NOT DEFINED CLANG_VERSION_PATCHLEVEL)
+   set(CLANG_VERSION_PATCHLEVEL ${LLVM_VERSION_PATCH})
+ endif()
++if(NOT DEFINED CLANG_VERSION_SUFFIX)
++  set(CLANG_VERSION_SUFFIX "")
++endif()
+ # Unlike PACKAGE_VERSION, CLANG_VERSION does not include LLVM_VERSION_SUFFIX.
+ set(CLANG_VERSION "${CLANG_VERSION_MAJOR}.${CLANG_VERSION_MINOR}.${CLANG_VERSION_PATCHLEVEL}")
+-message(STATUS "Clang version: ${CLANG_VERSION}")
++message(STATUS "Clang version: ${CLANG_VERSION}${CLANG_VERSION_SUFFIX}")
+ 
+ # Configure the Version.inc file.
+ configure_file(
+diff --git a/clang/include/clang/Basic/Version.inc.in b/clang/include/clang/Basic/Version.inc.in
+index fd80af4b511..a7f6a74c8c9 100644
+--- a/clang/include/clang/Basic/Version.inc.in
++++ b/clang/include/clang/Basic/Version.inc.in
+@@ -3,3 +3,4 @@
+ #define CLANG_VERSION_MAJOR @CLANG_VERSION_MAJOR@
+ #define CLANG_VERSION_MINOR @CLANG_VERSION_MINOR@
+ #define CLANG_VERSION_PATCHLEVEL @CLANG_VERSION_PATCHLEVEL@
++#define CLANG_VERSION_SUFFIX "@CLANG_VERSION_SUFFIX@"
+diff --git a/clang/lib/Basic/Version.cpp b/clang/lib/Basic/Version.cpp
+index c2b7753d412..f198c311905 100644
+--- a/clang/lib/Basic/Version.cpp
++++ b/clang/lib/Basic/Version.cpp
+@@ -125,7 +125,7 @@ std::string getClangToolFullVersion(StringRef ToolName) {
+ #ifdef CLANG_VENDOR
+   OS << CLANG_VENDOR;
+ #endif
+-  OS << ToolName << " version " CLANG_VERSION_STRING " "
++  OS << ToolName << " version " CLANG_VERSION_STRING CLANG_VERSION_SUFFIX " "
+      << getClangFullRepositoryVersion();
+ 
+   // If vendor supplied, include the base LLVM version as well.
+@@ -144,7 +144,7 @@ std::string getClangFullCPPVersion() {
+ #ifdef CLANG_VENDOR
+   OS << CLANG_VENDOR;
+ #endif
+-  OS << "Clang " CLANG_VERSION_STRING " " << getClangFullRepositoryVersion();
++  OS << "Clang " CLANG_VERSION_STRING CLANG_VERSION_SUFFIX " " << getClangFullRepositoryVersion();
+   return OS.str();
+ }
+ 
+-- 
+2.20.1
+
