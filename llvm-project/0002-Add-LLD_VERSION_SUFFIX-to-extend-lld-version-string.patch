@@ -1,0 +1,57 @@
+From d09dfeb24ca24d0da73187c82792e639b7924060 Mon Sep 17 00:00:00 2001
+From: Albert I <krascgq@outlook.co.id>
+Date: Sun, 20 Jan 2019 02:42:55 +0800
+Subject: [PATCH] Add LLD_VERSION_SUFFIX to extend lld version string
+
+Signed-off-by: Albert I <krascgq@outlook.co.id>
+---
+ lld/CMakeLists.txt                    | 6 +++++-
+ lld/Common/Version.cpp                | 2 +-
+ lld/include/lld/Common/Version.inc.in | 1 +
+ 3 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/lld/CMakeLists.txt b/lld/CMakeLists.txt
+index e2fbdbfbbb4..bc621eddf4d 100644
+--- a/lld/CMakeLists.txt
++++ b/lld/CMakeLists.txt
+@@ -121,10 +121,14 @@ set(LLD_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+ set(LLD_INCLUDE_DIR ${LLD_SOURCE_DIR}/include )
+ set(LLD_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+ 
++if(NOT DEFINED LLD_VERSION_SUFFIX)
++  set(LLD_VERSION_SUFFIX "")
++endif()
++
+ # Compute the LLD version from the LLVM version.
+ string(REGEX MATCH "[0-9]+\\.[0-9]+(\\.[0-9]+)?" LLD_VERSION
+   ${PACKAGE_VERSION})
+-message(STATUS "LLD version: ${LLD_VERSION}")
++message(STATUS "LLD version: ${LLD_VERSION}${LLD_VERSION_SUFFIX}")
+ 
+ string(REGEX REPLACE "([0-9]+)\\.[0-9]+(\\.[0-9]+)?" "\\1" LLD_VERSION_MAJOR
+   ${LLD_VERSION})
+diff --git a/lld/Common/Version.cpp b/lld/Common/Version.cpp
+index 41a3236efbb..73246f1cc33 100644
+--- a/lld/Common/Version.cpp
++++ b/lld/Common/Version.cpp
+@@ -38,5 +38,5 @@ static std::string getRepository() {
+ 
+ // Returns a version string, e.g., "LLD 4.0 (lld/trunk 284614)".
+ std::string lld::getLLDVersion() {
+-  return "LLD " + std::string(LLD_VERSION_STRING) + getRepository();
++  return "LLD " + std::string(LLD_VERSION_STRING) + std::string(LLD_VERSION_SUFFIX) + getRepository();
+ }
+diff --git a/lld/include/lld/Common/Version.inc.in b/lld/include/lld/Common/Version.inc.in
+index 2789a5c4608..4f8ac1b275e 100644
+--- a/lld/include/lld/Common/Version.inc.in
++++ b/lld/include/lld/Common/Version.inc.in
+@@ -2,5 +2,6 @@
+ #define LLD_VERSION_STRING "@LLD_VERSION@"
+ #define LLD_VERSION_MAJOR @LLD_VERSION_MAJOR@
+ #define LLD_VERSION_MINOR @LLD_VERSION_MINOR@
++#define LLD_VERSION_SUFFIX "@LLD_VERSION_SUFFIX@"
+ #define LLD_REVISION_STRING "@LLD_REVISION@"
+ #define LLD_REPOSITORY_STRING "@LLD_REPOSITORY@"
+-- 
+2.20.1
+
